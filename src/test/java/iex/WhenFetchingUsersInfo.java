@@ -1,5 +1,7 @@
 package iex;
 
+import iex.model.Address;
+import iex.model.Company;
 import io.restassured.RestAssured;
 import net.serenitybdd.junit.runners.SerenityRunner;
 import net.serenitybdd.rest.Ensure;
@@ -43,8 +45,8 @@ public class WhenFetchingUsersInfo {
         given().queryParam("username", "Bret")
         .when().get("/users");
 
-        Ensure.that(" User email is Sincere@april.biz", response ->  response.body("email[0]", equalTo("Sincere@april.biz")))
-                .andThat( " User id is not zero" , response -> response.body("id[0]", greaterThan(0)));
+        Ensure.that(" Address email is Sincere@april.biz", response ->  response.body("email[0]", equalTo("Sincere@april.biz")))
+                .andThat( " Address id is not zero" , response -> response.body("id[0]", greaterThan(0)));
     }
 
     @Test
@@ -55,6 +57,16 @@ public class WhenFetchingUsersInfo {
         List<String> zipCode = SerenityRest.lastResponse().jsonPath().getList("address.zipcode");
         zipCode.forEach(
                 zipcode -> assertThat(zipcode).isNotEmpty());
+    }
+
+    @Test
+    public void allUsersShouldHaveACompanyWithClass(){
+        when().get("/users")
+                .then().statusCode(200);
+
+        List<Company> companies = SerenityRest.lastResponse().jsonPath().getList("company" , Company.class);
+        companies.forEach(
+                company -> assertThat(company.getName()).isNotEmpty());
     }
 
 }
