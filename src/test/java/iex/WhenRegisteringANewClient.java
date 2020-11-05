@@ -1,5 +1,6 @@
 package iex;
 
+import iex.model.Client;
 import io.restassured.RestAssured;
 import net.serenitybdd.junit.runners.SerenityRunner;
 import net.serenitybdd.rest.Ensure;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import static net.serenitybdd.rest.SerenityRest.given;
 import static net.serenitybdd.rest.SerenityRest.when;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
@@ -24,11 +26,11 @@ public class WhenRegisteringANewClient {
     @Test
     public void eachNewClientShouldBeGivenAUniqueId() {
 
-        String newClient = "{\n" +
-                "  \"email\": \"pepe@pig.com\",\n" +
-                "  \"firstName\": \"pepe\",\n" +
-                "  \"lastName\": \"Pig\"\n" +
-                "}";
+        Client newClient = new Client.Builder()
+                .setEmail("pepe@pig.com")
+                .setFirstName("pepe")
+                .setLastName("Pig")
+                .createClient();
 
         given().contentType("application/json")
                 .and().body(newClient)
@@ -39,6 +41,8 @@ public class WhenRegisteringANewClient {
 
         String id = SerenityRest.lastResponse().jsonPath().getString("id");
 
+        Client createdClient = SerenityRest.lastResponse().as(Client.class);
+
         given().pathParam("id", id)
                 .when().get("/client/{id}")
                 .then().statusCode(200);
@@ -46,6 +50,12 @@ public class WhenRegisteringANewClient {
         Ensure.that("First name is pepe", response -> response.body("firstName", equalTo("pepe")));
         Ensure.that("Last name is Pig", response -> response.body("lastName", equalTo("Pig")));
         Ensure.that("Email is pepe@pig.com", response -> response.body("email", equalTo("pepe@pig.com")));
+
+        Client foundClient = SerenityRest.with().pathParam("id", id)
+                .get("/client/{id}").as(Client.class);
+
+       assertThat(createdClient).isEqualTo(foundClient);
+
     }
 
 
