@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 import static net.serenitybdd.rest.SerenityRest.given;
 import static net.serenitybdd.rest.SerenityRest.when;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +45,16 @@ public class WhenFetchingUsersInfo {
 
         Ensure.that(" User email is Sincere@april.biz", response ->  response.body("email[0]", equalTo("Sincere@april.biz")))
                 .andThat( " User id is not zero" , response -> response.body("id[0]", greaterThan(0)));
+    }
+
+    @Test
+    public void allUsersShouldHaveAZipCode(){
+        when().get("/users")
+                .then().statusCode(200);
+
+        List<String> zipCode = SerenityRest.lastResponse().jsonPath().getList("address.zipcode");
+        zipCode.forEach(
+                zipcode -> assertThat(zipcode).isNotEmpty());
     }
 
 }
