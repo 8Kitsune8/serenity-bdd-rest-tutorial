@@ -3,12 +3,14 @@ package iex;
 import io.restassured.RestAssured;
 import net.serenitybdd.junit.runners.SerenityRunner;
 import net.serenitybdd.rest.Ensure;
+import net.serenitybdd.rest.SerenityRest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static net.serenitybdd.rest.SerenityRest.given;
 import static net.serenitybdd.rest.SerenityRest.when;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
@@ -28,6 +30,10 @@ public class WhenFetchingUsersInfo {
 
             Ensure.that("user name is returned", response -> response.body("username", equalTo("Bret")));
             Ensure.that("email is returned", response -> response.body("email", equalTo("Sincere@april.biz")));
+
+        String userEmail = SerenityRest.lastResponse().jsonPath().getString("email");
+        assertThat(userEmail).isEqualTo("Sincere@april.biz");
+
     }
 
     @Test
