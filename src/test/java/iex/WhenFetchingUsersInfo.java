@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static net.serenitybdd.rest.SerenityRest.given;
 import static net.serenitybdd.rest.SerenityRest.when;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -20,10 +21,13 @@ public class WhenFetchingUsersInfo {
 
     @Test
     public void shouldReturnUserNameAndMail(){
-        when().get("/users/1")
+        given().pathParam("symbol", "users")
+        .when().get("/{symbol}/1")
                 .then().statusCode(200);
 
             Ensure.that("user name is returned", response -> response.body("username", equalTo("Bret")));
             Ensure.that("email is returned", response -> response.body("email", equalTo("Sincere@april.biz")));
     }
+
+
 }
