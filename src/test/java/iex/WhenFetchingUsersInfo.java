@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import static net.serenitybdd.rest.SerenityRest.given;
 import static net.serenitybdd.rest.SerenityRest.when;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 @RunWith(SerenityRunner.class)
 public class WhenFetchingUsersInfo {
@@ -29,5 +30,13 @@ public class WhenFetchingUsersInfo {
             Ensure.that("email is returned", response -> response.body("email", equalTo("Sincere@april.biz")));
     }
 
+    @Test
+    public void shouldRetrieveEmailForGivenUser(){
+        given().queryParam("username", "Bret")
+        .when().get("/users");
+
+        Ensure.that(" User email is Sincere@april.biz", response ->  response.body("email[0]", equalTo("Sincere@april.biz")))
+                .andThat( " User id is not zero" , response -> response.body("id[0]", greaterThan(0)));
+    }
 
 }
