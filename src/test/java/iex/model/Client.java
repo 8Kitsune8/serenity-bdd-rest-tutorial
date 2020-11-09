@@ -90,4 +90,12 @@ public class Client {
     public int hashCode() {
         return Objects.hash(id, email, firstName, lastName);
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
 }
