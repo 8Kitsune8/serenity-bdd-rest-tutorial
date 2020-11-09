@@ -1,11 +1,11 @@
 package starter.stepdefinitions;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.java.Before;
+
 import io.restassured.RestAssured;
 import net.serenitybdd.rest.SerenityRest;
 
@@ -19,11 +19,11 @@ public class MarketPricesStepDefinitions {
         RestAssured.baseURI = "http://localhost:8080/api";
     }
 
-    @Given("^(?:.*) is an active trader on IEX")
+    @Given("^(?:.*) is an active trader on IEX$")
     public void registeredUserIsAnActiveTraderOnIEX() {
     }
 
-    @And("^(.*) is currently trading at (.*)")
+    @And("^(.*) is currently trading at (.*)$")
     public void shareIsCurrentlyTradingAt(String symbol, String expectedPrice) {
         RestAssured.given().body(expectedPrice)
                 .contentType("application/json")
@@ -37,20 +37,20 @@ public class MarketPricesStepDefinitions {
             .then().statusCode(200);
     }
 
-    @Then("^s?he should see a price of (.*)")
+    @Then("^s?he should see a price of (.*)$")
     public void shouldSeeAPriceOf(double expectedPrice) {
         Double price = lastResponse().as(Double.class);
 
         assertThat(price).isEqualTo(expectedPrice);
     }
 
-    @Given("the market is closed")
+    @Given("^the market is closed$")
     public void theMarketIsClosed() {
        // RestAssured.get("/market/close");
     }
 
-    @And("^(.*) closed at (.*)")
-    public void closedAt(String symbol, String closingPrice) {
+    @And("^(.*) closed at (.*)$")
+    public void closedAt(String symbol, double closingPrice) {
         RestAssured.given().body(closingPrice)
                 .contentType("application/json")
                 .when().post("/stock/{symbol}/price", symbol)
